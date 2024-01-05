@@ -37,12 +37,12 @@ namespace Jmab.Ext.Refac
 
             // Create a modified version of the method node
             //var copyMethodNode = methodNode;
-            var methodNode1 = AddAsyncAndReturnTypeTask(methodNode);
-            //var methodNode2 = AddAwaitToAsyncCalls(semanticModel, methodNode1);
+            var methodNode1 = AddAwaitToAsyncCalls(semanticModel, methodNode);
+            var methodNode2 = AddAsyncAndReturnTypeTask(methodNode1);
             //var methodNode2 = AwaitReferences(methodNode, root, semanticModel, cancellationToken);
 
             // Replace the original method node in the root syntax tree
-            var newRoot = ReplaceOriginalNode(root, methodNode, methodNode1);
+            var newRoot = ReplaceOriginalNode(root, methodNode, methodNode2);
 
             var newDocument = document.WithSyntaxRoot(newRoot);
             var newSolution = newDocument.Project.Solution;
@@ -61,19 +61,15 @@ namespace Jmab.Ext.Refac
 
         private static MethodDeclarationSyntax AddAsyncAndReturnTypeTask(MethodDeclarationSyntax methodNode)
         {
-            // Add 'async' modifier
             var asyncModifier = SyntaxFactory.Token(SyntaxKind.AsyncKeyword);
             var modifiedMethodNode = methodNode.AddModifiers(asyncModifier);
 
-            // Change return type if it's 'void' or a non-Task type
             if (modifiedMethodNode.ReturnType is PredefinedTypeSyntax returnTypeSyntax && returnTypeSyntax.Keyword.IsKind(SyntaxKind.VoidKeyword))
             {
-                // If current return type is 'void', change to 'Task'
                 modifiedMethodNode = modifiedMethodNode.WithReturnType(SyntaxFactory.ParseTypeName("Task"));
             }
             else if (!(modifiedMethodNode.ReturnType.ToString().StartsWith("Task")))
             {
-                // If return type is not a Task type, wrap the existing return type with 'Task<>'
                 var newReturnType = SyntaxFactory.ParseTypeName($"Task<{modifiedMethodNode.ReturnType}>");
                 modifiedMethodNode = modifiedMethodNode.WithReturnType(newReturnType);
             }
@@ -88,26 +84,24 @@ namespace Jmab.Ext.Refac
 
             foreach (var statement in newMethod.Body.Statements)
             {
-                // Check if the statement is an expression statement
-                if (statement is ExpressionStatementSyntax expressionStatement)
+                var expression = GetExpression(statement);
+
+                if (expression == null) continue;
+
+                // Get the type info of the expression
+                var typeInfo = semanticModel.GetTypeInfo(expression);
+
+                // Check if the expression type is Task or Task<T>
+                if (typeInfo.Type is INamedTypeSymbol namedTypeSymbol &&
+                    (namedTypeSymbol.Name == "Task" || (namedTypeSymbol.Name == "Task" && namedTypeSymbol.IsGenericType)))
                 {
-                    var expression = expressionStatement.Expression;
+                    // Create a new await expression
+                    var awaitExpression = SyntaxFactory.AwaitExpression(expression)
+                                                        .WithLeadingTrivia(expression.GetLeadingTrivia())
+                                                        .WithTrailingTrivia(expression.GetTrailingTrivia());
 
-                    // Get the type info of the expression
-                    var typeInfo = semanticModel.GetTypeInfo(expression);
-
-                    // Check if the expression type is Task or Task<T>
-                    if (typeInfo.Type is INamedTypeSymbol namedTypeSymbol &&
-                        (namedTypeSymbol.Name == "Task" || (namedTypeSymbol.Name == "Task" && namedTypeSymbol.IsGenericType)))
-                    {
-                        // Create a new await expression
-                        var awaitExpression = SyntaxFactory.AwaitExpression(expression)
-                                                           .WithLeadingTrivia(expression.GetLeadingTrivia())
-                                                           .WithTrailingTrivia(expression.GetTrailingTrivia());
-
-                        // Replace the original expression with the new await expression
-                        newMethod = newMethod.ReplaceNode(expression, awaitExpression);
-                    }
+                    // Replace the original expression with the new await expression
+                    newMethod = newMethod.ReplaceNode(expression, awaitExpression);
                 }
             }
 
@@ -116,6 +110,67 @@ namespace Jmab.Ext.Refac
             //var newRoot = root.ReplaceNode(methodDeclaration, newMethod);
             //var newDocument = document.WithSyntaxRoot(newRoot);
             //return newDocument;
+        }
+
+        private static ExpressionSyntax GetExpression(SyntaxNode node)
+        {
+            switch (node)
+            {
+                case ExpressionStatementSyntax expressionStatement:
+                    return expressionStatement.Expression;
+
+                case ReturnStatementSyntax returnStatement:
+                    return returnStatement.Expression;
+
+                case LocalDeclarationStatementSyntax localDeclaration:
+                    return localDeclaration.Declaration.Variables.FirstOrDefault()?.Initializer?.Value;
+
+                case AssignmentExpressionSyntax assignmentExpression:
+                    return assignmentExpression;
+
+                case InvocationExpressionSyntax invocationExpression:
+                    return invocationExpression;
+
+                case BinaryExpressionSyntax binaryExpression:
+                    return binaryExpression;
+
+                case ConditionalExpressionSyntax conditionalExpression:
+                    return conditionalExpression;
+
+                case LambdaExpressionSyntax lambdaExpression:
+                    return lambdaExpression;
+
+                case ParenthesizedExpressionSyntax parenthesizedExpression:
+                    return parenthesizedExpression;
+
+                case CastExpressionSyntax castExpression:
+                    return castExpression;
+
+                case ObjectCreationExpressionSyntax objectCreationExpression:
+                    return objectCreationExpression;
+
+                case InitializerExpressionSyntax initializerExpression:
+                    return initializerExpression;
+
+                case AwaitExpressionSyntax awaitExpression:
+                    return awaitExpression;
+
+                case ElementAccessExpressionSyntax elementAccessExpression:
+                    return elementAccessExpression;
+
+                case ArgumentSyntax argument:
+                    return argument.Expression;
+
+                case SwitchExpressionSyntax switchExpression:
+                    return switchExpression;
+
+                case QueryExpressionSyntax queryExpression:
+                    return queryExpression;
+
+                // Add more cases as needed
+                default:
+                    return null;
+            }
         }
 
         private static MethodDeclarationSyntax AwaitReferences(MethodDeclarationSyntax methodNode, SyntaxNode root, SemanticModel semanticModel, CancellationToken cancellationToken)
