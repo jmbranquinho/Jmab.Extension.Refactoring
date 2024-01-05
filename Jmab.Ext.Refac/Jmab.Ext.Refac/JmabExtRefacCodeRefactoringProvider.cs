@@ -35,37 +35,19 @@ namespace Jmab.Ext.Refac
         {
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
+            // Create a modified version of the method node
+            //var copyMethodNode = methodNode;
             var methodNode1 = AddAsyncAndReturnTypeTask(methodNode);
+            //var methodNode2 = AddAwaitToAsyncCalls(semanticModel, methodNode1);
+            //var methodNode2 = AwaitReferences(methodNode, root, semanticModel, cancellationToken);
 
-            // Replace the original methodNode in the root with the modified methodNode1
-            var newRoot = root.ReplaceNode(methodNode, methodNode1);
+            // Replace the original method node in the root syntax tree
+            var newRoot = ReplaceOriginalNode(root, methodNode, methodNode1);
 
-            // Create a new document with the modified root
             var newDocument = document.WithSyntaxRoot(newRoot);
+            var newSolution = newDocument.Project.Solution;
 
-            // Create a new syntax tree from the modified document
-            var newSyntaxTree = await newDocument.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
-
-            // Create a new compilation that includes the new syntax tree
-            var compilation = CSharpCompilation.Create("ModifiedCompilation")
-                .AddReferences(MetadataReference.CreateFromFile(typeof(object).Assembly.Location))
-                .AddSyntaxTrees(newSyntaxTree);
-
-            // Compile and get diagnostics
-            var diagnostics = compilation.GetDiagnostics();
-
-            // Filter diagnostics for CS0029 within the modified method
-            var methodSpan = methodNode1.Span;
-            var cs0029Diagnostics = diagnostics.Where(diag => diag.Id == "CS0029" && methodSpan.Contains(diag.Location.SourceSpan)).ToList();
-
-            // If you need to handle these diagnostics, you can do it here
-            ;
-
-            // Finalize the new document and solution
-            var finalDocument = newDocument.Project.Solution.GetDocument(newDocument.Id);
-            var finalSolution = finalDocument.Project.Solution;
-
-            return finalSolution;
+            return newSolution;
         }
 
         private static SyntaxNode ReplaceOriginalNode(SyntaxNode root, MethodDeclarationSyntax methodNode, MethodDeclarationSyntax modifiedMethodNode)
