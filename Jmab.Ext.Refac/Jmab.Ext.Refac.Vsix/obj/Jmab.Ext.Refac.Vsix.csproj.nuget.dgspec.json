@@ -1,0 +1,124 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\dev\\Jmab.Ext.Refac\\Jmab.Ext.Refac\\Jmab.Ext.Refac.Vsix\\Jmab.Ext.Refac.Vsix.csproj": {}
+  },
+  "projects": {
+    "C:\\dev\\Jmab.Ext.Refac\\Jmab.Ext.Refac\\Jmab.Ext.Refac.Vsix\\Jmab.Ext.Refac.Vsix.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\dev\\Jmab.Ext.Refac\\Jmab.Ext.Refac\\Jmab.Ext.Refac.Vsix\\Jmab.Ext.Refac.Vsix.csproj",
+        "projectName": "Jmab.Ext.Refac.Vsix",
+        "projectPath": "C:\\dev\\Jmab.Ext.Refac\\Jmab.Ext.Refac\\Jmab.Ext.Refac.Vsix\\Jmab.Ext.Refac.Vsix.csproj",
+        "packagesPath": "C:\\Users\\jorge.branquinho\\.nuget\\packages\\",
+        "outputPath": "C:\\dev\\Jmab.Ext.Refac\\Jmab.Ext.Refac\\Jmab.Ext.Refac.Vsix\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\jorge.branquinho\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net472"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net472": {
+            "targetAlias": "net472",
+            "projectReferences": {
+              "C:\\dev\\Jmab.Ext.Refac\\Jmab.Ext.Refac\\Jmab.Ext.Refac\\Jmab.Ext.Refac.csproj": {
+                "projectPath": "C:\\dev\\Jmab.Ext.Refac\\Jmab.Ext.Refac\\Jmab.Ext.Refac\\Jmab.Ext.Refac.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net472": {
+          "targetAlias": "net472",
+          "dependencies": {
+            "Microsoft.VSSDK.BuildTools": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[16.8.3038, )"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.114\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\dev\\Jmab.Ext.Refac\\Jmab.Ext.Refac\\Jmab.Ext.Refac\\Jmab.Ext.Refac.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\dev\\Jmab.Ext.Refac\\Jmab.Ext.Refac\\Jmab.Ext.Refac\\Jmab.Ext.Refac.csproj",
+        "projectName": "Jmab.Ext.Refac",
+        "projectPath": "C:\\dev\\Jmab.Ext.Refac\\Jmab.Ext.Refac\\Jmab.Ext.Refac\\Jmab.Ext.Refac.csproj",
+        "packagesPath": "C:\\Users\\jorge.branquinho\\.nuget\\packages\\",
+        "outputPath": "C:\\dev\\Jmab.Ext.Refac\\Jmab.Ext.Refac\\Jmab.Ext.Refac\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\jorge.branquinho\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netstandard2.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netstandard2.0": {
+            "targetAlias": "netstandard2.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netstandard2.0": {
+          "targetAlias": "netstandard2.0",
+          "dependencies": {
+            "Microsoft.CodeAnalysis.Analyzers": {
+              "target": "Package",
+              "version": "[2.9.8, )"
+            },
+            "Microsoft.CodeAnalysis.CSharp.Workspaces": {
+              "target": "Package",
+              "version": "[3.3.1, )"
+            },
+            "NETStandard.Library": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.0.3, )",
+              "autoReferenced": true
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.114\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
