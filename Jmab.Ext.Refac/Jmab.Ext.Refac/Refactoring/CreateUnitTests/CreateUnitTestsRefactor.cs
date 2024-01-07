@@ -18,7 +18,96 @@ namespace Jmab.Ext.Refac.Refactoring.CreateUnitTests
 
         public static async Task<Solution> ApplyRefactoring(CodeRefactoringContext context, CancellationToken cancellationToken)
         {
-            throw new Exception();
+            var (root, document, semanticModel, node)
+                = await RefactoringHelper.GetRootDocumentAndNode(context, cancellationToken);
+
+            if (!(node is MethodDeclarationSyntax methodNode))
+            {
+                return document.Project.Solution;
+            }
+
+            var allPaths = new List<List<SyntaxNode>>();
+            var currentPath = new List<SyntaxNode>();
+            AnalyzeNode(methodNode.Body, currentPath, allPaths);
+            //return allPaths;
+            ;
+            throw new NotImplementedException();
+        }
+
+        private static void AnalyzeNode(SyntaxNode node, List<SyntaxNode> currentPath, List<List<SyntaxNode>> allPaths)
+        {
+            if (node == null) return;
+
+            currentPath.Add(node);
+
+            if (IsControlFlowNode(node))
+            {
+                var controlFlowPaths = GetControlFlowPaths(node);
+                foreach (var path in controlFlowPaths.Item1) // True/First path
+                {
+                    var newPath = new List<SyntaxNode>(currentPath);
+                    AnalyzeNode(path, newPath, allPaths);
+                }
+                if (controlFlowPaths.Item2 != null && controlFlowPaths.Item2.Any())
+                {
+                    foreach (var path in controlFlowPaths.Item2) // False/Second path
+                    {
+                        var newPath = new List<SyntaxNode>(currentPath);
+                        AnalyzeNode(path, newPath, allPaths);
+                    }
+                }
+            }
+            else
+            {
+                // Continue traversing
+                foreach (var childNode in node.ChildNodes())
+                {
+                    AnalyzeNode(childNode, currentPath, allPaths);
+                }
+            }
+
+            // If it's an end node, add the current path to allPaths
+            if (IsEndNode(node))
+            {
+                allPaths.Add(new List<SyntaxNode>(currentPath));
+            }
+
+            // Backtrack
+            currentPath.RemoveAt(currentPath.Count - 1);
+        }
+
+        private static bool IsEndNode(SyntaxNode node)
+        {
+            // Check if it's a return statement
+            if (node is ReturnStatementSyntax)
+                return true;
+
+            // Check if it's a throw statement
+            if (node is ThrowStatementSyntax)
+                return true;
+
+            // Check if it's a break statement (commonly used to exit loops)
+            if (node is BreakStatementSyntax)
+                return true;
+
+            // Check if it's the last statement in a method
+            if (IsLastStatementInMethod(node))
+                return true;
+
+            return false;
+        }
+
+        private static bool IsLastStatementInMethod(SyntaxNode node)
+        {
+            // Assuming 'node' is a statement and not a block or method itself
+            // Check if the parent is a BlockSyntax and if 'node' is the last child
+            if (node.Parent is BlockSyntax block)
+            {
+                var lastStatement = block.Statements.LastOrDefault();
+                return lastStatement == node;
+            }
+
+            return false;
         }
 
         public static bool IsControlFlowNode(SyntaxNode node)
