@@ -1156,19 +1156,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\jorge.branquinho\\.nuget\\packages\\": {}
+    "C:\\Users\\jmabr\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\dev\\Jmab.Ext.Refac\\Jmab.Ext.Refac\\Jmab.Ext.Refac.Vsix\\Jmab.Ext.Refac.Vsix.csproj",
+      "projectUniqueName": "C:\\Users\\jmabr\\source\\repos\\Jmab.Ext.Refac\\Jmab.Ext.Refac\\Jmab.Ext.Refac.Vsix\\Jmab.Ext.Refac.Vsix.csproj",
       "projectName": "Jmab.Ext.Refac.Vsix",
-      "projectPath": "C:\\dev\\Jmab.Ext.Refac\\Jmab.Ext.Refac\\Jmab.Ext.Refac.Vsix\\Jmab.Ext.Refac.Vsix.csproj",
-      "packagesPath": "C:\\Users\\jorge.branquinho\\.nuget\\packages\\",
-      "outputPath": "C:\\dev\\Jmab.Ext.Refac\\Jmab.Ext.Refac\\Jmab.Ext.Refac.Vsix\\obj\\",
+      "projectPath": "C:\\Users\\jmabr\\source\\repos\\Jmab.Ext.Refac\\Jmab.Ext.Refac\\Jmab.Ext.Refac.Vsix\\Jmab.Ext.Refac.Vsix.csproj",
+      "packagesPath": "C:\\Users\\jmabr\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\jmabr\\source\\repos\\Jmab.Ext.Refac\\Jmab.Ext.Refac\\Jmab.Ext.Refac.Vsix\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\jorge.branquinho\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\jmabr\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -1176,14 +1181,15 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net472": {
           "targetAlias": "net472",
           "projectReferences": {
-            "C:\\dev\\Jmab.Ext.Refac\\Jmab.Ext.Refac\\Jmab.Ext.Refac\\Jmab.Ext.Refac.csproj": {
-              "projectPath": "C:\\dev\\Jmab.Ext.Refac\\Jmab.Ext.Refac\\Jmab.Ext.Refac\\Jmab.Ext.Refac.csproj"
+            "C:\\Users\\jmabr\\source\\repos\\Jmab.Ext.Refac\\Jmab.Ext.Refac\\Jmab.Ext.Refac\\Jmab.Ext.Refac.csproj": {
+              "projectPath": "C:\\Users\\jmabr\\source\\repos\\Jmab.Ext.Refac\\Jmab.Ext.Refac\\Jmab.Ext.Refac\\Jmab.Ext.Refac.csproj"
             }
           }
         }
@@ -1204,7 +1210,7 @@
             "version": "[16.8.3038, )"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.114\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.304\\RuntimeIdentifierGraph.json"
       }
     }
   }
