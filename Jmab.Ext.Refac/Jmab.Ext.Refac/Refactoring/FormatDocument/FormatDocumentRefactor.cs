@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis.CodeRefactorings;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -44,7 +45,6 @@ namespace Jmab.Ext.Refac.Refactoring.FormatDocument
                 .OrderBy(m => GetVisibilityOrder(m))
                 .ToList();
 
-            // Concatenate the sorted members with required spacing
             var sortedMembers = ConcatenateMembersWithSpacing(sortedFields, sortedProperties, sortedConstructors, sortedMethods);
 
             var newClassDeclaration = classDeclaration.WithMembers(SyntaxFactory.List(sortedMembers));
@@ -62,108 +62,48 @@ namespace Jmab.Ext.Refac.Refactoring.FormatDocument
            List<MethodDeclarationSyntax> methods)
         {
             var allMembers = new List<MemberDeclarationSyntax>();
-            allMembers.AddRange(AdjustMembersSpacing(fields));
-            allMembers.AddRange(AdjustMembersSpacing(properties));
-            allMembers.AddRange(AdjustMembersSpacing(constructors));
-            allMembers.AddRange(AdjustMembersSpacing(methods));
+            allMembers.AddRange(AdjustMembersSpacing(fields, MemberSpacing.NoSpace));
+            allMembers.AddRange(AdjustMembersSpacing(properties, MemberSpacing.Space));
+            allMembers.AddRange(AdjustMembersSpacing(constructors, MemberSpacing.Space));
+            allMembers.AddRange(AdjustMembersSpacing(methods, MemberSpacing.Space));
 
             return allMembers;
         }
 
-        private static IEnumerable<MemberDeclarationSyntax> AdjustMembersSpacing<T>(List<T> members) where T : MemberDeclarationSyntax
+        private static IEnumerable<MemberDeclarationSyntax> AdjustMembersSpacing<T>(List<T> members, MemberSpacing spacing) where T : MemberDeclarationSyntax
         {
-            //if (!members.Any()) return Enumerable.Empty<MemberDeclarationSyntax>();
+            if (!members.Any()) return Enumerable.Empty<MemberDeclarationSyntax>();
 
-            //var parentIndent = GetParentIndentation(members.First());
-            //var indentation = IncrementIndentation(parentIndent);
+            var firstMember = members.First();
 
-
-            //var adjustedMembers = new List<MemberDeclarationSyntax>
-            //{
-            //    AddCorrectSpacing(members.First(), string.Empty, isFirstMember: true),
-            //};
-
-            //var x = true;
-            //foreach (var member in members.Skip(1))
-            //{
-            //    adjustedMembers.Add(AddCorrectSpacing(member, indentation, x));
-            //    x = false;
-            //}
-
-            //return adjustedMembers;
-            return members;
-        }
-
-        private static string IncrementIndentation(string value)
-        {
-            return value + "    ";//TODO
-        }
-
-        private static T AddCorrectSpacing<T>(T member, string indentation, bool isFirstMember = false) where T : MemberDeclarationSyntax
-        {
-            var leadingTrivia = member.GetLeadingTrivia();
-
-            // Filter out only XML documentation and end-of-line trivia (preserve documentation comments)
-            var filteredTrivia = leadingTrivia
-                                              //.Where(trivia => trivia.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia)
-                                              //                                              || trivia.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia)
-                                              //                                              || trivia.IsKind(SyntaxKind.EndOfLineTrivia))
-                                              .ToSyntaxTriviaList();
-
-
-            // Clear existing whitespace trivia (indentation)
-            //filteredTrivia = filteredTrivia.Where(trivia => !trivia.IsKind(SyntaxKind.WhitespaceTrivia)).ToSyntaxTriviaList();
-
-            if (!isFirstMember)
+            var list = new List<MemberDeclarationSyntax>
             {
-                // Add a new line before adding indentation, but only if the last trivia is not a new line
-                if (filteredTrivia.LastOrDefault().Kind() != SyntaxKind.EndOfLineTrivia)
+                firstMember
+            };
+
+            var leadingTrivia = firstMember.GetLeadingTrivia().Where(trivia => !trivia.IsKind(SyntaxKind.EndOfLineTrivia));
+            var trailingTrivia = firstMember.GetTrailingTrivia();
+            var endOfLineTrivia = trailingTrivia.Where(trivia => trivia.IsKind(SyntaxKind.EndOfLineTrivia)).ToList();
+            if (endOfLineTrivia.Count != 1)
+            {
+                endOfLineTrivia = trailingTrivia.Where(trivia => !trivia.IsKind(SyntaxKind.EndOfLineTrivia))
+                                               .Concat(new[] { SyntaxFactory.EndOfLine(Environment.NewLine) })
+                                               .ToList();
+            }
+
+            foreach (var member in members.Skip(1))
+            {
+                if (spacing == MemberSpacing.NoSpace)
                 {
-                    filteredTrivia = filteredTrivia.Add(SyntaxFactory.CarriageReturnLineFeed);
+                    list.Add(member.WithLeadingTrivia(leadingTrivia).WithTrailingTrivia(trailingTrivia));
+                }
+                else
+                {
+                    list.Add(member);
                 }
             }
 
-            // Add the specified indentation for all members
-            var indentationTrivia = SyntaxFactory.Whitespace(indentation);
-            filteredTrivia = filteredTrivia.Add(indentationTrivia);
-
-            return member.WithLeadingTrivia(filteredTrivia);
-        }
-
-        private static string GetParentIndentation(SyntaxNode node)
-        {
-            var parent = node.Parent;
-            if (parent == null)
-            {
-                return string.Empty;
-            }
-
-            var leadingTrivia = parent.GetLeadingTrivia();
-            var indentationTrivia = leadingTrivia.FirstOrDefault(trivia => trivia.IsKind(SyntaxKind.WhitespaceTrivia));
-            return indentationTrivia.ToFullString();
-        }
-
-        //private static string GetLeadingIndentation(SyntaxNode member)
-        //{
-        //    var leadingTrivia = member.GetLeadingTrivia();
-        //    var indentationTrivia = leadingTrivia.FirstOrDefault(trivia => trivia.IsKind(SyntaxKind.WhitespaceTrivia));
-        //    return indentationTrivia.ToFullString();
-        //}
-
-        private static T AddLeadingNewLine<T>(T member) where T : MemberDeclarationSyntax
-        {
-            var leadingTrivia = member.GetLeadingTrivia();
-            var newLineTrivia = SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed);
-            if (!leadingTrivia.Any(trivia => trivia.IsKind(SyntaxKind.EndOfLineTrivia)))
-            {
-                newLineTrivia = newLineTrivia.AddRange(leadingTrivia);
-            }
-            return member.WithLeadingTrivia(newLineTrivia);
-        }
-
-        private static T RemoveLeadingTrivia<T>(T member) where T : MemberDeclarationSyntax
-        {
-            return member.WithLeadingTrivia(SyntaxFactory.Whitespace(""));
+            return list;
         }
 
         private static int GetVisibilityOrder(BaseFieldDeclarationSyntax field)
@@ -202,6 +142,12 @@ namespace Jmab.Ext.Refac.Refactoring.FormatDocument
 
             // Default visibility is private
             return visibilityOrder["private"];
+        }
+
+        protected enum MemberSpacing
+        {
+            NoSpace,
+            Space
         }
     }
 }
