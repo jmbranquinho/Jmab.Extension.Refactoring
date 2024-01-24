@@ -18,3 +18,13 @@ C:\Users\jmabr\source\repos\Jmab.Ext.Refac\Jmab.Ext.Refac\Jmab.Ext.Refac\obj\Deb
 C:\Users\jmabr\source\repos\Jmab.Ext.Refac\Jmab.Ext.Refac\Jmab.Ext.Refac\obj\Debug\netstandard2.0\Jmab.Ext.Refac.csproj.CoreCompileInputs.cache
 C:\Users\jmabr\source\repos\Jmab.Ext.Refac\Jmab.Ext.Refac\Jmab.Ext.Refac\obj\Debug\netstandard2.0\Jmab.Ext.Refac.dll
 C:\Users\jmabr\source\repos\Jmab.Ext.Refac\Jmab.Ext.Refac\Jmab.Ext.Refac\obj\Debug\netstandard2.0\Jmab.Ext.Refac.pdb
+C:\dev\Jmab.Extension.Refactoring\Jmab.Ext.Refac\Jmab.Ext.Refac\bin\Debug\netstandard2.0\Jmab.Ext.Refac.deps.json
+C:\dev\Jmab.Extension.Refactoring\Jmab.Ext.Refac\Jmab.Ext.Refac\bin\Debug\netstandard2.0\Jmab.Ext.Refac.dll
+C:\dev\Jmab.Extension.Refactoring\Jmab.Ext.Refac\Jmab.Ext.Refac\bin\Debug\netstandard2.0\Jmab.Ext.Refac.pdb
+C:\dev\Jmab.Extension.Refactoring\Jmab.Ext.Refac\Jmab.Ext.Refac\obj\Debug\netstandard2.0\Jmab.Ext.Refac.csproj.AssemblyReference.cache
+C:\dev\Jmab.Extension.Refactoring\Jmab.Ext.Refac\Jmab.Ext.Refac\obj\Debug\netstandard2.0\Jmab.Ext.Refac.GeneratedMSBuildEditorConfig.editorconfig
+C:\dev\Jmab.Extension.Refactoring\Jmab.Ext.Refac\Jmab.Ext.Refac\obj\Debug\netstandard2.0\Jmab.Ext.Refac.AssemblyInfoInputs.cache
+C:\dev\Jmab.Extension.Refactoring\Jmab.Ext.Refac\Jmab.Ext.Refac\obj\Debug\netstandard2.0\Jmab.Ext.Refac.AssemblyInfo.cs
+C:\dev\Jmab.Extension.Refactoring\Jmab.Ext.Refac\Jmab.Ext.Refac\obj\Debug\netstandard2.0\Jmab.Ext.Refac.csproj.CoreCompileInputs.cache
+C:\dev\Jmab.Extension.Refactoring\Jmab.Ext.Refac\Jmab.Ext.Refac\obj\Debug\netstandard2.0\Jmab.Ext.Refac.dll
+C:\dev\Jmab.Extension.Refactoring\Jmab.Ext.Refac\Jmab.Ext.Refac\obj\Debug\netstandard2.0\Jmab.Ext.Refac.pdb

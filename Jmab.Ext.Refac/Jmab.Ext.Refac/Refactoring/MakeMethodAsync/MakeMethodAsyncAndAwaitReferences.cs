@@ -1,10 +1,10 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis;
-using System;
-using System.Threading.Tasks;
-using System.Threading;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeRefactorings;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Jmab.Ext.Refac.Refactoring.MakeMethodAsync
 {
@@ -16,7 +16,7 @@ namespace Jmab.Ext.Refac.Refactoring.MakeMethodAsync
 
         public static async Task<Solution> ApplyRefactoring(CodeRefactoringContext context, CancellationToken cancellationToken)
         {
-            var (root, document, semanticModel, node) 
+            var (root, document, semanticModel, node)
                 = await RefactoringHelper.GetRootDocumentAndNode(context, cancellationToken);
 
             if (!(node is MethodDeclarationSyntax methodNode))
@@ -66,7 +66,7 @@ namespace Jmab.Ext.Refac.Refactoring.MakeMethodAsync
         }
 
         public static MethodDeclarationSyntax AddAwaitToAsyncCalls(
-            SemanticModel semanticModel, 
+            SemanticModel semanticModel,
             MethodDeclarationSyntax methodDeclaration)
         {
             var newMethod = methodDeclaration;
@@ -95,9 +95,9 @@ namespace Jmab.Ext.Refac.Refactoring.MakeMethodAsync
 
         private static bool HasReturnTypeTask(TypeInfo typeInfo)
         {
-            return typeInfo.Type is INamedTypeSymbol namedTypeSymbol 
-                && (namedTypeSymbol.Name == _task 
-                    || (namedTypeSymbol.Name == _task 
+            return typeInfo.Type is INamedTypeSymbol namedTypeSymbol
+                && (namedTypeSymbol.Name == _task
+                    || (namedTypeSymbol.Name == _task
                         && namedTypeSymbol.IsGenericType));
         }
 
@@ -138,7 +138,7 @@ namespace Jmab.Ext.Refac.Refactoring.MakeMethodAsync
                 case SwitchExpressionSyntax switchExpression:
                     return switchExpression;
                 case QueryExpressionSyntax queryExpression:
-                    return queryExpression;                
+                    return queryExpression;
                 default:
                     return null;
             }
