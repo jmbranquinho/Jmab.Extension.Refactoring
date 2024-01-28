@@ -1,30 +1,21 @@
 ﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeRefactorings;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Jmab.Ext.Refac.Refactoring.FormatDocument
 {
     public class FormatDocumentRefactor
     {
-        public const string Command = "Jorgify class";
-
-        public static async Task<Solution> ApplyRefactoring(CodeRefactoringContext context, CancellationToken cancellationToken)
+        /// <summary>
+        /// sorts the document according to visibility
+        /// </summary>
+        /// <param name="classDeclaration"></param>
+        /// <returns></returns>
+        public static ClassDeclarationSyntax FormatDocument(ClassDeclarationSyntax classDeclaration)
         {
-            var (root, document, semanticModel, node)
-                = await RefactoringHelper.GetRootDocumentAndNode(context, cancellationToken);
-
-            var classDeclaration = node.FirstAncestorOrSelf<ClassDeclarationSyntax>();
-            if (classDeclaration == null)
-            {
-                return document.Project.Solution;
-            }
-
             var sortedFields = classDeclaration.Members
                 .OfType<FieldDeclarationSyntax>()
                 .OrderBy(m => GetVisibilityOrder(m))
@@ -48,11 +39,7 @@ namespace Jmab.Ext.Refac.Refactoring.FormatDocument
             var sortedMembers = ConcatenateMembersWithSpacing(sortedFields, sortedProperties, sortedConstructors, sortedMethods);
 
             var newClassDeclaration = classDeclaration.WithMembers(SyntaxFactory.List(sortedMembers));
-
-            var newRoot = root.ReplaceNode(classDeclaration, newClassDeclaration);
-
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument.Project.Solution;
+            return newClassDeclaration;
         }
 
         private static IEnumerable<MemberDeclarationSyntax> ConcatenateMembersWithSpacing(
@@ -75,35 +62,35 @@ namespace Jmab.Ext.Refac.Refactoring.FormatDocument
             if (!members.Any()) return Enumerable.Empty<MemberDeclarationSyntax>();
 
             var firstMember = members.First();
-
-            var list = new List<MemberDeclarationSyntax>
-            {
-                firstMember
-            };
+            var list = new List<MemberDeclarationSyntax> { firstMember };
 
             var leadingTrivia = firstMember.GetLeadingTrivia().Where(trivia => !trivia.IsKind(SyntaxKind.EndOfLineTrivia));
-            var trailingTrivia = firstMember.GetTrailingTrivia();
-            var endOfLineTrivia = trailingTrivia.Where(trivia => trivia.IsKind(SyntaxKind.EndOfLineTrivia)).ToList();
-            if (endOfLineTrivia.Count != 1)
-            {
-                endOfLineTrivia = trailingTrivia.Where(trivia => !trivia.IsKind(SyntaxKind.EndOfLineTrivia))
-                                               .Concat(new[] { SyntaxFactory.EndOfLine(Environment.NewLine) })
-                                               .ToList();
-            }
 
             foreach (var member in members.Skip(1))
             {
-                if (spacing == MemberSpacing.NoSpace)
-                {
-                    list.Add(member.WithLeadingTrivia(leadingTrivia).WithTrailingTrivia(trailingTrivia));
-                }
-                else
-                {
-                    list.Add(member);
-                }
+                IEnumerable<SyntaxTrivia> adjustedTrailingTrivia = AdjustTrailingTrivia(member, spacing);
+
+                var adjustedLeadingTrivia = member.GetLeadingTrivia().Where(trivia => !trivia.IsKind(SyntaxKind.EndOfLineTrivia));
+
+                list.Add(member.WithLeadingTrivia(adjustedLeadingTrivia).WithTrailingTrivia(adjustedTrailingTrivia));
             }
 
             return list;
+        }
+
+        private static IEnumerable<SyntaxTrivia> AdjustTrailingTrivia<T>(T member, MemberSpacing spacing) where T : MemberDeclarationSyntax
+        {
+            switch (spacing)
+            {
+                case MemberSpacing.NoSpace:
+                    return new[] { SyntaxFactory.EndOfLine(Environment.NewLine) };
+
+                case MemberSpacing.Space:
+                    return new[] { SyntaxFactory.EndOfLine(Environment.NewLine), SyntaxFactory.EndOfLine(Environment.NewLine) };
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(spacing), spacing, null);
+            }
         }
 
         private static int GetVisibilityOrder(BaseFieldDeclarationSyntax field)
