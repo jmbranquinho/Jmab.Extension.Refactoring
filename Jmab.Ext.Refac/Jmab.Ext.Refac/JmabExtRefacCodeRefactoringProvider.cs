@@ -1,4 +1,4 @@
-﻿using Jmab.Ext.Refac.Refactoring.FormatDocument;
+﻿using Jmab.Ext.Refac.Refactoring.JorgifyClass;
 using Jmab.Ext.Refac.Refactoring.MakeMethodAsync;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -18,7 +18,7 @@ namespace Jmab.Ext.Refac
         public sealed override Task ComputeRefactoringsAsync(CodeRefactoringContext context)
         {
             AddAction(context, MakeMethodAsyncAndAwaitReferences.Command, MakeMethodAsyncAndAwaitReferences.ApplyRefactoring);
-            AddAction(context, FormatDocumentRefactor.Command, FormatDocumentRefactor.ApplyRefactoring);
+            AddAction(context, JorgifyClassRefactor.Command, JorgifyClassRefactor.ApplyRefactoring);
             //AddAction(context, CreateUnitTestsRefactor.Command, CreateUnitTestsRefactor.ApplyRefactoring);
 
             return Task.CompletedTask;

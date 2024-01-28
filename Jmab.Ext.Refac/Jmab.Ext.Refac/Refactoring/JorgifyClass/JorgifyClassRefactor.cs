@@ -1,5 +1,4 @@
-﻿using Jmab.Ext.Refac.Refactoring.FormatDocument;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeRefactorings;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Threading;
@@ -22,9 +21,8 @@ namespace Jmab.Ext.Refac.Refactoring.JorgifyClass
                 return document.Project.Solution;
             }
 
-            var newClassDeclaration = FormatDocumentRefactor.FormatDocument(classDeclaration);
-
-            var newRoot = root.ReplaceNode(classDeclaration, newClassDeclaration);
+            //var newClassDeclaration = FormatDocumentRefactor.FormatDocument(classDeclaration);
+            var newRoot = root.ReplaceNode(classDeclaration, JorgifyClassHandler.JorgifyClass(classDeclaration));
 
             var newDocument = document.WithSyntaxRoot(newRoot);
             return newDocument.Project.Solution;
