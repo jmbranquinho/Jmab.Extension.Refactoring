@@ -1,4 +1,5 @@
-﻿using Jmab.Ext.Refac.Refactoring.JorgifyClass.Constructors;
+﻿using Jmab.Ext.Refac.Refactoring.JorgifyClass.Base;
+using Jmab.Ext.Refac.Refactoring.JorgifyClass.Constructors;
 using Jmab.Ext.Refac.Refactoring.JorgifyClass.Fields;
 using Jmab.Ext.Refac.Refactoring.JorgifyClass.Methods;
 using Jmab.Ext.Refac.Refactoring.JorgifyClass.Properties;
@@ -13,10 +14,10 @@ namespace Jmab.Ext.Refac.Refactoring.JorgifyClass
     {
         public static ClassDeclarationSyntax JorgifyClass(ClassDeclarationSyntax classDeclaration)
         {
-            var fieldHandler = new FieldSorterHandler();
-            var propertyHandler = new PropertySorterHandler();
-            var constructorHandler = new ConstructorSorterHandler();
-            var methodHandler = new MethodSorterHandler();
+            var fieldHandler = GetFieldHandler();
+            var propertyHandler = GetPropertyHandler();
+            var constructorHandler = GetCtorHandler();
+            var methodHandler = GetMethodHandler();
 
             var updatedFields = fieldHandler.Handle(FetchOfType<FieldDeclarationSyntax>(classDeclaration));
             var updatedProperties = propertyHandler.Handle(FetchOfType<PropertyDeclarationSyntax>(classDeclaration));
@@ -26,6 +27,28 @@ namespace Jmab.Ext.Refac.Refactoring.JorgifyClass
             var members = ConcatenateAllMembers(updatedFields, updatedProperties, updatedConstructors, updatedMethods);
 
             return classDeclaration.WithMembers(SyntaxFactory.List(members));
+        }
+
+        private static ChainOfResponsibilityMember GetMethodHandler()
+        {
+            return new MethodSorterHandler();
+        }
+
+        private static ChainOfResponsibilityMember GetCtorHandler()
+        {
+            return new ConstructorSorterHandler();
+        }
+
+        private static ChainOfResponsibilityMember GetPropertyHandler()
+        {
+            return new PropertySorterHandler();
+        }
+
+        private static ChainOfResponsibilityMember GetFieldHandler()
+        {
+            var sortHandler = new FieldSorterHandler();
+            //sortHandler.SetNext(new PrivateFieldRenameHandler());
+            return sortHandler;
         }
 
         private static List<MemberDeclarationSyntax> FetchOfType<T>(ClassDeclarationSyntax classDeclaration)
